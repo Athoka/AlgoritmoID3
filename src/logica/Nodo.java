@@ -4,16 +4,31 @@ import java.util.ArrayList;
 
 public class Nodo {
 
-	private ArrayList<Nodo> hijos;
-	private Nodo padre;
+	private ArrayList<Nodo> hijos; //Lista de hijos
+	private Nodo padre; //Null si es la raiz del arbol
 	private String nombre; // Nombre del atributo. Si es "Si" o "No" es el nodo final
-	private String condicion; // Valor que tiene el atributo 
-	private float merito;
+	private String condicion; // Valor del atributo con el que se llega a este nodo. Null si es la raiz
+	private float merito; //merito del atributo
 	
 	public Nodo(String nombre, float merito) {
 		this.nombre = nombre;
 		this.merito = merito;
 		this.padre = null;
+		this.condicion = null;
+		this.hijos = new ArrayList<Nodo>();
+	}
+	
+	public Nodo(String nombre,String condicion) {
+		this.nombre = nombre;
+		this.merito = 0;
+		this.padre = null;
+		this.condicion = condicion;
+		this.hijos = new ArrayList<Nodo>();
+	}
+	
+	public Nodo() {
+		this.padre = null;;
+		this.hijos = new ArrayList<Nodo>();
 	}
 
 	public Nodo getPadre() {
@@ -54,5 +69,9 @@ public class Nodo {
 	
 	public float getMerito() {
 		return this.merito;
+	}
+	
+	public void setHijos(ArrayList<Nodo> lista) {
+		this.hijos = lista;
 	}
 }
