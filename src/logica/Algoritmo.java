@@ -65,7 +65,7 @@ public class Algoritmo {
 		this.solucion = new Nodo(menorAtributo, menorMerito);
 		this.solucion.setHijos(calcularRama(menorAtributo));
 		for(int i = 0; i < this.solucion.getHijos().size(); i++) {
-			if(!this.solucion.getHijos().get(i).getNombre().equals("Si") && !this.solucion.getHijos().get(i).getNombre().equals("No")) {
+			if(!this.solucion.getHijos().get(i).getNombre().equals("si") && !this.solucion.getHijos().get(i).getNombre().equals("no")) {
 				this.solucion.setHijo(ejecutar(), i);
 			}
 		}
@@ -86,7 +86,7 @@ public class Algoritmo {
 			}
 		}
 		
-		//Almacena en un hashmap los datos de la manera clave -> nombre atributo, valor -> arraylist con los valores de la clase (Si o No)
+		//Almacena en un hashmap los datos de la manera clave -> nombre atributo, valor -> arraylist con los valores de la clase (si o No)
 		HashMap<String, ArrayList<String>> atributos = new HashMap<String, ArrayList<String>>(); 
 		
 		//Para cada fila de lista ejemplos 
@@ -108,22 +108,23 @@ public class Algoritmo {
 		for(String a : atributos.keySet()) { //Para cada clave a en el hashmap
 			boolean positivos = true, negativos = true;
 			for(int i = 0; i < atributos.get(a).size(); i++) { // Para cada posicion del arraylist de la clave a
-				if(atributos.get(a).get(i).equals("Si")) {
+				if(atributos.get(a).get(i).equals("si")) {
 					negativos = false;
-				} else if (atributos.get(a).get(i).equals("Si")) {
+				} else if (atributos.get(a).get(i).equals("si")) {
 					positivos = false;
 				}
 			}
+			
 			//Rellenamos un nodo por cada clave
 			Nodo n = new Nodo();
 			if(positivos) {
 				n.setCondicion(a);
-				n.setNombre("Si");
+				n.setNombre("si");
 			} else if (negativos) {
 				n.setCondicion(a);
-				n.setNombre("No");
+				n.setNombre("no");
 			} else {
-				n.setCondicion(a);
+				n = ejecutar();
 			}
 			rama.add(n);
 		}
@@ -132,6 +133,6 @@ public class Algoritmo {
 	}
 	
 	public void mostrarSolucion() {
-		System.out.println(this.solucion.getNombre());
+		System.out.println(this.solucion.toString());
 	}
 }

@@ -74,4 +74,10 @@ public class Nodo {
 	public void setHijos(ArrayList<Nodo> lista) {
 		this.hijos = lista;
 	}
+	
+	public String toString() {
+		String s;
+		s = this.nombre + "\n" + this.condicion + "\n" + this.getMerito();
+		return s;
+	}
 }
