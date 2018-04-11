@@ -1,6 +1,6 @@
+nublado,caluroso,alta,falso,si
 soleado,caluroso,alta,falso,no
 soleado,caluroso,alta,verdad,no
-nublado,caluroso,alta,falso,si
 lluvioso,templado,alta,falso,si
 lluvioso,frio,normal,falso,si
 lluvioso,frio,normal,verdad,no

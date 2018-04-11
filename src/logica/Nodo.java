@@ -14,8 +14,8 @@ public class Nodo {
 		this.nombre = nombre;
 		this.merito = merito;
 		this.padre = null;
-		this.condicion = null;
 		this.hijos = new ArrayList<Nodo>();
+		this.nombre = " ";
 	}
 	
 	public Nodo(String nombre,String condicion) {
@@ -24,9 +24,11 @@ public class Nodo {
 		this.padre = null;
 		this.condicion = condicion;
 		this.hijos = new ArrayList<Nodo>();
+		this.nombre = " ";
 	}
 	
 	public Nodo() {
+		this.nombre = " ";
 		this.padre = null;;
 		this.hijos = new ArrayList<Nodo>();
 	}
@@ -79,5 +81,9 @@ public class Nodo {
 		String s;
 		s = this.nombre + "\n" + this.condicion + "\n" + this.getMerito();
 		return s;
+	}
+	
+	public boolean esHoja() {
+		return this.nombre.equals("si") || this.nombre.equals("no");
 	}
 }

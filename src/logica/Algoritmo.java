@@ -19,22 +19,11 @@ public class Algoritmo {
 	 * Ejecuta el algoritmo id3
 	 * @return Nodo raíz del arbol
 	 */
-	public Nodo ejecutar() {
-		HashMap<String, Float> meritos = new HashMap<String, Float>();
-		
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-		 * 1. Si lista-ejemplos está vacía, "regresar"; en caso contrario, seguir.                                             *
-		 * 2. Si todos los ejemplos en lista-ejemplos son +, devolver "+"; de otro modo seguir                                 *
-		 * 3. Si todos los ejemplos en lista-ejemplos son , devolver ""; de otro modo seguir                                   *
-		 * 4. Si lista-atributos está vacía, devolver "error"; en caso contrario:                                              *
-		 * 		(1) llamar mejor al elemento a de lista-atributos que minimice mérito (a)                                      *
-		 * 		(2) iniciar un árbol cuya raíz sea mejor: para cada valor vi de mejor                                          *
-		 * 			* incluir en ejemplos-restantes los elementos de lista-ejemplos que tengan valor vi del atributo mejor.    *
-		 * 			* dejar en atributos-restantes todos los elementos de lista-atributos excepto mejor.                       *
-		 * 			* devolver el valor de: ID3 (ejemplos-restantes, atributos-restantes) (llamada recursiva al algoritmo)     *
-		 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		/**
+	/*public Nodo ejecutar() {
+		if(this.lista_atributos.isEmpty()) {
+			return null; 
+		}
+		/*
 		 * Recorrer lista_atributos
 		 * Para cada atributo en lista_atributos, calculo el merito de cada columna de atributo
 		 * El resultado es el merito
@@ -45,36 +34,92 @@ public class Algoritmo {
 		 * 
 		 * La recursion es un movidote
 		 * Hay que recalcular los meritos para cada llamada recursiva
-		 */
+		 
 		
+		HashMap<String, Float> meritos = new HashMap<String, Float>();	
 		for(int i = 0; i < this.lista_atributos.size()-1; i++) {
-			meritos.put(lista_atributos.get(i), Calculos.calcularMerito(lista_ejemplos, i)); //columna
+			meritos.put(lista_atributos.get(i), Calculos.calcularMerito(lista_ejemplos, i));
 		}
 		
 		String menorAtributo = " ";
 		float menorMerito = Float.MAX_VALUE;
 		for(String atributo : meritos.keySet()) {
 			if(menorMerito > meritos.get(atributo)) {
-				menorAtributo = atributo;
+				menorAtributo = atributo; 
 				menorMerito = meritos.get(atributo);
 			}
 		}
 		
-		
-		
+		//Falla porque en la ultima vuelta, cuando no quedan mas atributos, no sabe ver que no tiene mas atributos y sigue
 		this.solucion = new Nodo(menorAtributo, menorMerito);
-		this.solucion.setHijos(calcularRama(menorAtributo));
+		calcularRama(menorAtributo);
 		for(int i = 0; i < this.solucion.getHijos().size(); i++) {
-			if(!this.solucion.getHijos().get(i).getNombre().equals("si") && !this.solucion.getHijos().get(i).getNombre().equals("no")) {
-				this.solucion.setHijo(ejecutar(), i);
+			if(this.solucion.esHoja()) {
+				System.out.println("Es hoja");
+				return this.solucion;
+			} else {
+				int index=0;
+				for(int j = 0; j < this.lista_atributos.size(); j++) {
+					if(this.lista_atributos.get(j).equals(menorAtributo))
+						index = j;
+				}
+				this.lista_atributos.remove(menorAtributo);
+				
+				for(int j = 0; j < this.lista_ejemplos.size(); j++) {
+					this.lista_ejemplos.get(j).remove(index);
+				}
+				
+				System.out.println("No es hoja");
+				return ejecutar();
 			}
 		}
 			
 		return this.solucion;
+	}*/
+	
+	public Nodo ejecutar() {
+		int k = 0;
+		this.solucion = new Nodo();
+		return ejecutar(solucion, k);
+	}
+	
+	private Nodo ejecutar (Nodo nodo, int k) {
+		
+		if(k == this.lista_atributos.size()-1) { //Si no quedan más atributos
+			return this.solucion;
+		} else {
+			HashMap<String, Float> meritos = new HashMap<String, Float>();	
+			for(int i = 0; i < this.lista_atributos.size()-1; i++) {
+				meritos.put(lista_atributos.get(i), Calculos.calcularMerito(lista_ejemplos, i));
+			}
+			
+			String menorAtributo = " ";
+			float menorMerito = Float.MAX_VALUE;
+			for(String atributo : meritos.keySet()) {
+				if(menorMerito > meritos.get(atributo)) {
+					menorAtributo = atributo; 
+					menorMerito = meritos.get(atributo);
+				}
+			}
+			
+			nodo.setNombre(menorAtributo);
+			nodo.setMerito(menorMerito);
+			//nodo = new Nodo(menorAtributo, menorMerito);
+			calcularRama(nodo, menorAtributo);
+	
+			if (nodo.getHijos() != null) {
+				for(int i = 0; i < this.solucion.getHijos().size(); i++) {
+					ejecutar(nodo.getHijos().get(i), k+1);
+					
+				}//nodo.getHijos().get(i).setHijo(ejecutar(k+1), i);
+			}
+			
+			return nodo;
+		}
 	}
 	
 	//TODO: Como calcular una rama
-	private ArrayList<Nodo> calcularRama(String atributo) {
+	private void calcularRama(Nodo nodo, String atributo) {
 		boolean encontrado = false;
 		int indexAtributo = 0, indexClase;
 		
@@ -86,17 +131,18 @@ public class Algoritmo {
 			}
 		}
 		
-		//Almacena en un hashmap los datos de la manera clave -> nombre atributo, valor -> arraylist con los valores de la clase (si o No)
+		//Almacena en un hashmap los datos de la manera clave -> valor atributo, valor -> arraylist con los valores de la clase (si o No)
 		HashMap<String, ArrayList<String>> atributos = new HashMap<String, ArrayList<String>>(); 
 		
 		//Para cada fila de lista ejemplos 
 		for(int i = 0; i < this.lista_ejemplos.size(); i++) {
 			indexClase = this.lista_ejemplos.get(i).size()-1; //Cogemos la ultima posicion de cada fila, que representa la columna de la clase 
-			if(atributos.containsKey(this.lista_ejemplos.get(i).get(indexAtributo))) { //Si el atributo ya estaba en el hashmap
+			if(!atributos.isEmpty() && atributos.containsKey(this.lista_ejemplos.get(i).get(indexAtributo))) { //Si el atributo ya estaba en el hashmap
 				ArrayList<String> list = atributos.get(this.lista_ejemplos.get(i).get(indexAtributo));
 				list.add(this.lista_ejemplos.get(i).get(indexClase));
 				atributos.put(this.lista_ejemplos.get(i).get(indexAtributo), list);
-			} else { //Si no estaba
+			} else/* if(/*!atributos.isEmpty())*/{ //Si no estaba
+				
 				ArrayList<String> list = new ArrayList<String>();
 				list.add(this.lista_ejemplos.get(i).get(indexClase));
 				atributos.put(this.lista_ejemplos.get(i).get(indexAtributo), list);
@@ -104,32 +150,30 @@ public class Algoritmo {
 		}
 		
 		//Una vez hemos rellenado el hashmap con los datos
-		ArrayList<Nodo> rama = new ArrayList<Nodo>();
 		for(String a : atributos.keySet()) { //Para cada clave a en el hashmap
 			boolean positivos = true, negativos = true;
 			for(int i = 0; i < atributos.get(a).size(); i++) { // Para cada posicion del arraylist de la clave a
 				if(atributos.get(a).get(i).equals("si")) {
 					negativos = false;
-				} else if (atributos.get(a).get(i).equals("si")) {
+				} else if (atributos.get(a).get(i).equals("no")) {
 					positivos = false;
 				}
 			}
 			
+			//TODO esto puede que sea lo problematico
 			//Rellenamos un nodo por cada clave
 			Nodo n = new Nodo();
+			n.setCondicion(a);
+			n.setPadre(this.solucion);
 			if(positivos) {
-				n.setCondicion(a);
 				n.setNombre("si");
 			} else if (negativos) {
-				n.setCondicion(a);
 				n.setNombre("no");
 			} else {
-				n = ejecutar();
+				//n.setNombre(null);
 			}
-			rama.add(n);
+			nodo.getHijos().add(n);
 		}
-		
-		return rama;
 	}
 	
 	public void mostrarSolucion() {
