@@ -80,16 +80,16 @@ public class Algoritmo {
 	public Nodo ejecutar() {
 		int k = 0;
 		this.solucion = new Nodo();
-		return ejecutar(solucion, k);
+		return ejecutar(solucion, k, this.lista_atributos, this.lista_ejemplos);
 	}
 	
-	private Nodo ejecutar (Nodo nodo, int k) {
+	private Nodo ejecutar (Nodo nodo, int k, ArrayList<String> lAtributos, ArrayList<ArrayList<String>> lEjemplos) {
 		
-		if(k == this.lista_atributos.size()-1) { //Si no quedan más atributos
-			return this.solucion;
+		if(lAtributos.size() == 1) { //Si no quedan más atributos
+			return nodo;
 		} else {
 			HashMap<String, Float> meritos = new HashMap<String, Float>();	
-			for(int i = 0; i < this.lista_atributos.size()-1; i++) {
+			for(int i = 0; i < lAtributos.size()-1; i++) {
 				meritos.put(lista_atributos.get(i), Calculos.calcularMerito(lista_ejemplos, i));
 			}
 			
@@ -105,27 +105,52 @@ public class Algoritmo {
 			nodo.setNombre(menorAtributo);
 			nodo.setMerito(menorMerito);
 			//nodo = new Nodo(menorAtributo, menorMerito);
-			calcularRama(nodo, menorAtributo);
+			calcularRama(nodo, menorAtributo, lAtributos, lEjemplos);
 	
+			//quitar el atributo de lAtributo
+			//quedarme sólo con los ejemplos que cumplan que el ejemplo es la condicion, hay que hacerlo para cada hijo, asi que tiene que ir en el for
+			//antes de la llamada recursiva
+			
 			if (nodo.getHijos() != null) {
-				for(int i = 0; i < this.solucion.getHijos().size(); i++) {
-					ejecutar(nodo.getHijos().get(i), k+1);
-					
-				}//nodo.getHijos().get(i).setHijo(ejecutar(k+1), i);
+				for(int i = 0; i < nodo.getHijos().size(); i++) {
+					int indice = 0;
+					for(int j = 0; j < lAtributos.size(); j++) {
+						if(lAtributos.get(j).equals(menorAtributo))
+							indice = j;
+					}
+					lAtributos.remove(indice);
+					lEjemplos = modificarEjemplos(lEjemplos, indice, nodo.getHijos().get(i).getCondicion());
+					nodo = ejecutar(nodo.getHijos().get(i), k+1, lAtributos, lEjemplos);
+				}
 			}
 			
 			return nodo;
 		}
 	}
 	
+	
+	private ArrayList<ArrayList<String>> modificarEjemplos(ArrayList<ArrayList<String>> lista, int indice, String condicion) {
+		ArrayList<ArrayList<String>> l = new ArrayList<ArrayList<String>>();
+		
+		for(int i = 0; i < lista.size(); i++) {
+			if(lista.get(i).get(indice).equals(condicion)) {
+				l.add(lista.get(i));
+				l.get(l.size()-1).remove(indice);
+			}
+		}
+		
+		return l;
+	}
+	
+	
 	//TODO: Como calcular una rama
-	private void calcularRama(Nodo nodo, String atributo) {
+	private void calcularRama(Nodo nodo, String atributo, ArrayList<String> lAtributos, ArrayList<ArrayList<String>> lEjemplos) {
 		boolean encontrado = false;
 		int indexAtributo = 0, indexClase;
 		
 		//Busca el indice del atributo
-		for(int i = 0; i < this.lista_atributos.size() && !encontrado; i++) {
-			if(this.lista_atributos.get(i).equals(atributo)) {
+		for(int i = 0; i < lAtributos.size() && !encontrado; i++) {
+			if(lAtributos.get(i).equals(atributo)) {
 				encontrado = true;
 				indexAtributo = i;
 			}
@@ -135,17 +160,17 @@ public class Algoritmo {
 		HashMap<String, ArrayList<String>> atributos = new HashMap<String, ArrayList<String>>(); 
 		
 		//Para cada fila de lista ejemplos 
-		for(int i = 0; i < this.lista_ejemplos.size(); i++) {
-			indexClase = this.lista_ejemplos.get(i).size()-1; //Cogemos la ultima posicion de cada fila, que representa la columna de la clase 
-			if(!atributos.isEmpty() && atributos.containsKey(this.lista_ejemplos.get(i).get(indexAtributo))) { //Si el atributo ya estaba en el hashmap
-				ArrayList<String> list = atributos.get(this.lista_ejemplos.get(i).get(indexAtributo));
-				list.add(this.lista_ejemplos.get(i).get(indexClase));
-				atributos.put(this.lista_ejemplos.get(i).get(indexAtributo), list);
+		for(int i = 0; i < lEjemplos.size(); i++) {
+			indexClase = lEjemplos.get(i).size()-1; //Cogemos la ultima posicion de cada fila, que representa la columna de la clase 
+			if(!atributos.isEmpty() && atributos.containsKey(lEjemplos.get(i).get(indexAtributo))) { //Si el atributo ya estaba en el hashmap
+				ArrayList<String> list = atributos.get(lEjemplos.get(i).get(indexAtributo));
+				list.add(lEjemplos.get(i).get(indexClase));
+				atributos.put(lEjemplos.get(i).get(indexAtributo), list);
 			} else/* if(/*!atributos.isEmpty())*/{ //Si no estaba
 				
 				ArrayList<String> list = new ArrayList<String>();
-				list.add(this.lista_ejemplos.get(i).get(indexClase));
-				atributos.put(this.lista_ejemplos.get(i).get(indexAtributo), list);
+				list.add(lEjemplos.get(i).get(indexClase));
+				atributos.put(lEjemplos.get(i).get(indexAtributo), list);
 			}
 		}
 		
