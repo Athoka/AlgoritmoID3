@@ -19,68 +19,13 @@ public class Algoritmo {
 	 * Ejecuta el algoritmo id3
 	 * @return Nodo raíz del arbol
 	 */
-	/*public Nodo ejecutar() {
-		if(this.lista_atributos.isEmpty()) {
-			return null; 
-		}
-		/*
-		 * Recorrer lista_atributos
-		 * Para cada atributo en lista_atributos, calculo el merito de cada columna de atributo
-		 * El resultado es el merito
-		 * 
-		 * Luego, con los meritos calculados, elijo el que menor merito tenga
-		 * Es el Nodo raiz. Con eso tengo que calcular una funcion que me calcule la rama
-		 * Para buscar las soluciones, comparar la columna que estoy mirando con la ultima y ver valores.
-		 * 
-		 * La recursion es un movidote
-		 * Hay que recalcular los meritos para cada llamada recursiva
-		 
-		
-		HashMap<String, Float> meritos = new HashMap<String, Float>();	
-		for(int i = 0; i < this.lista_atributos.size()-1; i++) {
-			meritos.put(lista_atributos.get(i), Calculos.calcularMerito(lista_ejemplos, i));
-		}
-		
-		String menorAtributo = " ";
-		float menorMerito = Float.MAX_VALUE;
-		for(String atributo : meritos.keySet()) {
-			if(menorMerito > meritos.get(atributo)) {
-				menorAtributo = atributo; 
-				menorMerito = meritos.get(atributo);
-			}
-		}
-		
-		//Falla porque en la ultima vuelta, cuando no quedan mas atributos, no sabe ver que no tiene mas atributos y sigue
-		this.solucion = new Nodo(menorAtributo, menorMerito);
-		calcularRama(menorAtributo);
-		for(int i = 0; i < this.solucion.getHijos().size(); i++) {
-			if(this.solucion.esHoja()) {
-				System.out.println("Es hoja");
-				return this.solucion;
-			} else {
-				int index=0;
-				for(int j = 0; j < this.lista_atributos.size(); j++) {
-					if(this.lista_atributos.get(j).equals(menorAtributo))
-						index = j;
-				}
-				this.lista_atributos.remove(menorAtributo);
-				
-				for(int j = 0; j < this.lista_ejemplos.size(); j++) {
-					this.lista_ejemplos.get(j).remove(index);
-				}
-				
-				System.out.println("No es hoja");
-				return ejecutar();
-			}
-		}
-			
-		return this.solucion;
-	}*/
 	
 	public Nodo ejecutar() {
 		int k = 0;
 		this.solucion = new Nodo();
-		return ejecutar(solucion, k, this.lista_atributos, this.lista_ejemplos);
+		this.solucion.setNumeroNodo(0);
+		this.solucion.setNivel(0);
+		return ejecutar(solucion, k+1, this.lista_atributos, this.lista_ejemplos);
 	}
 	
 	private Nodo ejecutar (Nodo nodo, int k, ArrayList<String> lAtributos, ArrayList<ArrayList<String>> lEjemplos) {
@@ -104,7 +49,6 @@ public class Algoritmo {
 			
 			nodo.setNombre(menorAtributo);
 			nodo.setMerito(menorMerito);
-			//nodo = new Nodo(menorAtributo, menorMerito);
 			calcularRama(nodo, menorAtributo, lAtributos, lEjemplos);
 	
 			//quitar el atributo de lAtributo
@@ -166,7 +110,7 @@ public class Algoritmo {
 				ArrayList<String> list = atributos.get(lEjemplos.get(i).get(indexAtributo));
 				list.add(lEjemplos.get(i).get(indexClase));
 				atributos.put(lEjemplos.get(i).get(indexAtributo), list);
-			} else/* if(/*!atributos.isEmpty())*/{ //Si no estaba
+			} else { //Si no estaba
 				
 				ArrayList<String> list = new ArrayList<String>();
 				list.add(lEjemplos.get(i).get(indexClase));
@@ -185,23 +129,30 @@ public class Algoritmo {
 				}
 			}
 			
-			//TODO esto puede que sea lo problematico
 			//Rellenamos un nodo por cada clave
 			Nodo n = new Nodo();
 			n.setCondicion(a);
-			n.setPadre(this.solucion);
+			n.setPadre(nodo);
+			//n.setNivel(nodo.getPadre().getNivel()+1);
 			if(positivos) {
 				n.setNombre("si");
 			} else if (negativos) {
 				n.setNombre("no");
-			} else {
-				//n.setNombre(null);
 			}
 			nodo.getHijos().add(n);
 		}
 	}
 	
 	public void mostrarSolucion() {
-		System.out.println(this.solucion.toString());
+		mostrarSolucion(this.solucion);
+	}
+	
+	private void mostrarSolucion(Nodo n) {
+		
+			System.out.println(n.toString());
+				for(int i = 0; i < n.getHijos().size(); i++) {
+					mostrarSolucion(n.getHijos().get(i));
+			}
+		
 	}
 }

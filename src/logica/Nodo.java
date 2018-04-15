@@ -9,6 +9,8 @@ public class Nodo {
 	private String nombre; // Nombre del atributo. Si es "Si" o "No" es el nodo final
 	private String condicion; // Valor del atributo con el que se llega a este nodo. Null si es la raiz
 	private float merito; //merito del atributo
+	private int nivel; 
+	private int numeroNodo;
 	
 	public Nodo(String nombre, float merito) {
 		this.nombre = nombre;
@@ -77,13 +79,36 @@ public class Nodo {
 		this.hijos = lista;
 	}
 	
-	public String toString() {
-		String s;
-		s = this.nombre + "\n" + this.condicion + "\n" + this.getMerito();
-		return s;
-	}
-	
 	public boolean esHoja() {
 		return this.nombre.equals("si") || this.nombre.equals("no");
+	}
+
+	public int getNivel() {
+		return this.nivel;
+	}
+
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
+
+	public int getNumeroNodo() {
+		return this.numeroNodo;
+	}
+
+	public void setNumeroNodo(int numeroNodo) {
+		this.numeroNodo = numeroNodo;
+	}
+	
+	public String toString() {
+		String s = "El arbol esta vacio";
+		s = "Nombre: " + this.nombre + "\n" 
+			+ "Condicion: " + this.condicion + "\n" 
+			+ "Merito: " + this.getMerito() + "\n";
+		
+		//if(!this.hijos.isEmpty()) {
+			
+		//}
+		
+		return s;
 	}
 }
