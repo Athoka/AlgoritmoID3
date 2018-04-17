@@ -9,6 +9,10 @@ public class Algoritmo {
 	private ArrayList<String> lista_atributos;
 	private ArrayList<ArrayList<String>> lista_ejemplos;
 	
+	public Algoritmo() {
+		
+	}
+	
 	public Algoritmo(ArrayList<ArrayList<String>> ejemplos, ArrayList<String> atributos) {
 		this.lista_atributos = atributos;
 		this.lista_ejemplos = ejemplos;
@@ -143,6 +147,14 @@ public class Algoritmo {
 			}
 			nodo.getHijos().add(n);
 		}
+	}
+	
+	public void setEjemplos(ArrayList<ArrayList<String>> ej) {
+		this.lista_ejemplos = ej;
+	}
+	
+	public void setAtributos(ArrayList<String> at) {
+		this.lista_atributos = at;
 	}
 	
 	public void mostrarSolucion() {
