@@ -25,17 +25,17 @@ public class Algoritmo {
 		this.solucion = new Nodo();
 		this.solucion.setNumeroNodo(0);
 		this.solucion.setNivel(0);
-		return ejecutar(solucion, k+1, this.lista_atributos, this.lista_ejemplos);
+		return ejecutar(this.solucion, k+1, this.lista_atributos, this.lista_ejemplos);
 	}
 	
 	private Nodo ejecutar (Nodo nodo, int k, ArrayList<String> lAtributos, ArrayList<ArrayList<String>> lEjemplos) {
 		
-		if(lAtributos.size() == 1) { //Si no quedan más atributos
+		if(lAtributos.size() == 1 || nodo.esHoja()) { //Si no quedan más atributos
 			return nodo;
 		} else {
 			HashMap<String, Float> meritos = new HashMap<String, Float>();	
 			for(int i = 0; i < lAtributos.size()-1; i++) {
-				meritos.put(lista_atributos.get(i), Calculos.calcularMerito(lista_ejemplos, i));
+				meritos.put(lAtributos.get(i), Calculos.calcularMerito(lEjemplos, i));
 			}
 			
 			String menorAtributo = " ";
@@ -62,9 +62,11 @@ public class Algoritmo {
 						if(lAtributos.get(j).equals(menorAtributo))
 							indice = j;
 					}
-					lAtributos.remove(indice);
-					lEjemplos = modificarEjemplos(lEjemplos, indice, nodo.getHijos().get(i).getCondicion());
-					nodo = ejecutar(nodo.getHijos().get(i), k+1, lAtributos, lEjemplos);
+					ArrayList<String> aux = new ArrayList<String>((ArrayList<String>)lAtributos.clone());
+					aux.remove(indice);
+					ArrayList<ArrayList<String>> auxEjemplos = new ArrayList<ArrayList<String>> (modificarEjemplos(lEjemplos, indice, nodo.getHijos().get(i).getCondicion()));
+							
+					ejecutar(nodo.getHijos().get(i), k+1, aux, auxEjemplos);
 				}
 			}
 			
@@ -148,11 +150,9 @@ public class Algoritmo {
 	}
 	
 	private void mostrarSolucion(Nodo n) {
-		
-			System.out.println(n.toString());
-				for(int i = 0; i < n.getHijos().size(); i++) {
-					mostrarSolucion(n.getHijos().get(i));
-			}
-		
+		System.out.println(n.toString());
+			for(int i = 0; i < n.getHijos().size(); i++) {
+				mostrarSolucion(n.getHijos().get(i));
+		}
 	}
 }

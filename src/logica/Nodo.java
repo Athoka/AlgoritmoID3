@@ -99,16 +99,26 @@ public class Nodo {
 		this.numeroNodo = numeroNodo;
 	}
 	
+	
 	public String toString() {
-		String s = "El arbol esta vacio";
-		s = "Nombre: " + this.nombre + "\n" 
-			+ "Condicion: " + this.condicion + "\n" 
-			+ "Merito: " + this.getMerito() + "\n";
+		String s;
+		s = "Nombre: " + this.nombre +"\n";
+		if(this.condicion == null) {
+			s += "Condicion: []\n"; 
+		} else {
+			s += "Condicion: " + this.condicion + "\n";
+		}
+		if(this.padre == null) {
+			s += "Padre: Ninguno\n";
+		} else {
+			s += "Padre: " + this.padre.nombre + "\n";
+		}
 		
-		//if(!this.hijos.isEmpty()) {
-			
-		//}
+		s+="\n";
 		
+		for(int i = 0; i < this.hijos.size(); i++) {
+			s += "Hijo " + i + "\n" + this.hijos.get(i).toString() + "\n";
+		}
 		return s;
 	}
 }
