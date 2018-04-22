@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import logica.Algoritmo;
 import persistenciaDatos.OperacionesFicheros;
@@ -15,10 +16,11 @@ public class Controlador {
 	
 	
 	private int menu() {
+		Scanner entrada = new Scanner(System.in);
 		System.out.println("1 - Ejecutar Algoritmo");
-		System.out.println("2 - Generar Reglas");
-		System.out.println("3 - Mostrar Nodos");
-		return 0;
+		System.out.println("0 - Salir");
+		System.out.print("Introduce opción: ");
+		return entrada.nextInt();
 	}
 	
 	public void ejecutarControlador() {
@@ -28,33 +30,31 @@ public class Controlador {
 			switch(opt) {
 				case 1:
 					ejecutarAlgoritmo();
+					a.mostrarReglas();
 					break;
-				case 2:
-					generarReglas();
-					break;
-				case 3:
-					mostrarNodos();
+				case 0: 
 					break;
 			}
 		} while (opt != 0);
-	}
-	
-	private void generarReglas() {
-		
-	}
-	
-	private void mostrarNodos() {
-		
-	}
+	}	
 	
 	private void ejecutarAlgoritmo() {
 		try {
+			Scanner in = new Scanner(System.in);
+			System.out.print("Introduce el fichero de atributos (acabado en .txt): ");
+			String atributosTxt = in.nextLine();
+			System.out.print("Introduce el fichero de ejemplos (acabado en .txt): ");
+			String ejemplosTxt = in.nextLine();
 			OperacionesFicheros of = new OperacionesFicheros();
-			ArrayList<ArrayList<String>> ejemplos = of.leerEjemplos("Juego.txt");
-			ArrayList<String> atributos = of.leerAtributos("AtributosJuego.txt");
+			ArrayList<ArrayList<String>> ejemplos = of.leerEjemplos(ejemplosTxt);
+			ArrayList<String> atributos = of.leerAtributos(atributosTxt);
 			a.setEjemplos(ejemplos);
 			a.setAtributos(atributos);
+			System.out.println("------ Ejecutando algoritmo ------");
+			System.out.println();
 			a.ejecutar();
+			System.out.println();
+			System.out.println();
 		} catch (Exception e) {
 		}
 	}

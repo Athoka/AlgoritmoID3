@@ -8,15 +8,17 @@ public class Algoritmo {
 	private Nodo solucion;
 	private ArrayList<String> lista_atributos;
 	private ArrayList<ArrayList<String>> lista_ejemplos;
+	private ArrayList<String> reglas;
 	
 	public Algoritmo() {
-		
+		this.reglas = new ArrayList<String>();
 	}
 	
 	public Algoritmo(ArrayList<ArrayList<String>> ejemplos, ArrayList<String> atributos) {
 		this.lista_atributos = atributos;
 		this.lista_ejemplos = ejemplos;
 		this.solucion = null;
+		this.reglas = new ArrayList<String>();
 	}
 
 	/**
@@ -25,14 +27,12 @@ public class Algoritmo {
 	 */
 	
 	public Nodo ejecutar() {
-		int k = 0;
 		this.solucion = new Nodo();
 		this.solucion.setNumeroNodo(0);
-		this.solucion.setNivel(0);
-		return ejecutar(this.solucion, k+1, this.lista_atributos, this.lista_ejemplos);
+		return ejecutar(this.solucion, this.lista_atributos, this.lista_ejemplos);
 	}
 	
-	private Nodo ejecutar (Nodo nodo, int k, ArrayList<String> lAtributos, ArrayList<ArrayList<String>> lEjemplos) {
+	private Nodo ejecutar (Nodo nodo, ArrayList<String> lAtributos, ArrayList<ArrayList<String>> lEjemplos) {
 		
 		if(lAtributos.size() == 1 || nodo.esHoja()) { //Si no quedan más atributos
 			return nodo;
@@ -70,7 +70,7 @@ public class Algoritmo {
 					aux.remove(indice);
 					ArrayList<ArrayList<String>> auxEjemplos = new ArrayList<ArrayList<String>> (modificarEjemplos(lEjemplos, indice, nodo.getHijos().get(i).getCondicion()));
 							
-					ejecutar(nodo.getHijos().get(i), k+1, aux, auxEjemplos);
+					ejecutar(nodo.getHijos().get(i), aux, auxEjemplos);
 				}
 			}
 			
@@ -165,6 +165,23 @@ public class Algoritmo {
 		System.out.println(n.toString());
 			for(int i = 0; i < n.getHijos().size(); i++) {
 				mostrarSolucion(n.getHijos().get(i));
+		}
+	}
+	
+	public void mostrarReglas() {
+		mostrarReglas(this.solucion);
+	}
+	
+	public void mostrarReglas(Nodo n) {
+		if(n.esHoja()) {
+			System.out.print("(" + n.getPadre().getNombre() + " = " + n.getCondicion() + ") -> " + n.getNombre() + "\n");
+		} else {
+			for(int i = 0; i < n.getHijos().size(); i++) {
+				if(n.getPadre() != null) {
+					System.out.print("(" + n.getPadre().getNombre() + " = " + n.getCondicion() +") ^ ");
+				}
+				mostrarReglas(n.getHijos().get(i));
+			}
 		}
 	}
 }
